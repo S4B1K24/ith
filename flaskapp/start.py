@@ -73,14 +73,7 @@ def draw(filename,size):
  plt.close()
 
 
-
-
-#read the image
-im = Image.open(filename)
-
-#flip image
-out = im.transpose(PIL.Image.FLIP_LEFT_RIGHT)
-out.save(filename)
+##рисуем рамки
  size=int(size)
  height = 224
  width = 224
@@ -90,14 +83,6 @@ out.save(filename)
  img[:,0:size,1] = 0
  img[:,224-size:,1] = 0
  img[224-size:,:,1] = 0
-
-
-#read the image
-im = Image.open(filename)
-
-#flip image
-out = im.transpose(PIL.Image.FLIP_TOP_BOTTOM)
-out.save('transpose-output.png')
 ##сохраняем новое изображение
  img = Image.fromarray((img * 255).astype(np.uint8))
  print(img)
