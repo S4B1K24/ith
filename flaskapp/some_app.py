@@ -102,18 +102,11 @@ def twist_image(file_name, choice):
     #plt.show()
     plt.savefig(gr_path)
     plt.close()
+    im = Image.open(file_name)
     x, y = im.size
-    if choice:
-        a = im.crop((0, 0, int(y * 0.5), x))
-        b = im.crop((int(y * 0.5), 0, x, y))
-        im.paste(b, (0, 0))
-        im.paste(a, (int(x * 0.5), 0))
-    else:
-        a = im.crop((0, 0, x, int(y * 0.5)))
-        b = im.crop((0, int(y * 0.5), x, y))
-        im.paste(b, (0, 0))
-        im.paste(a, (0, int(y * 0.5)))
+    im = im.rotate(int(choice))
     im.save(file_name)
+
  
  
 @app.route("/iz", methods=['GET', 'POST'])
