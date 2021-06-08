@@ -102,16 +102,25 @@ def twist_image(file_name, choice):
     im.save(file_name)
 
 
-@app.route("/iz", methods=['GET', 'POST'])
-def iz():
-    form = IzForm()
-    filename = None
-    if form.validate_on_submit():
-        photo = form.upload.data.filename.split('.')[-1]
-        filename = os.path.join('./static', f'photo.{photo}')
-        form.upload.data.save(filename)
-        twist_image(filename, form.user.data)
-    return render_template('iz.html', form=form, image_name=filename)
+@app.route("/iz",methods=['GET', 'POST'])
+def net():
+ # создаем объект формы
+ form = NetForm()
+ # обнуляем переменные передаваемые в форму
+ filename=None
+ newfilename=None
+ grname=None
+ # проверяем нажатие сабмит и валидацию введенных данных
+ if form.validate_on_submit():
+  # файлы с изображениями читаются из каталога static
+  filename = os.path.join('./static', secure_filename(form.upload.data.filename))
+ 
+  sz=form.size.data
+ 
+  form.upload.data.save(filename)
+  newfilename, grname = draw(filename,sz)
+ # передаем форму в шаблон, так же передаем имя файла и результат работы нейронной
+ # сети если был нажат сабмит, либо передадим falsy значения
 
 
 # метод для обработки запроса от пользователя
@@ -153,7 +162,7 @@ def apinet():
     # возвращаем ответ
     return resp
 
-@app.route("/net",methods=['GET', 'POST'])
+@app.route("/iz",methods=['GET', 'POST'])
 def net():
  # создаем объект формы
  form = NetForm()
@@ -173,7 +182,7 @@ def net():
  # передаем форму в шаблон, так же передаем имя файла и результат работы нейронной
  # сети если был нажат сабмит, либо передадим falsy значения
  
- return render_template('net.html',form=form,image_name=newfilename,gr_name=grname)
+ return render_template('iz.html',form=form,image_name=newfilename,gr_name=grname)
 @app.route("/apixml", methods=['GET', 'POST'])
 def apixml():
     # парсим xml файл в dom
