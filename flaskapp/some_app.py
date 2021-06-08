@@ -88,6 +88,17 @@ class IzForm(FlaskForm):
  
 def twist_image(file_name, choice):
     im = Image.open(file_name)
+    fig = plt.figure(figsize=(6, 4))
+    ax = fig.add_subplot()
+    data = np.random.randint(0, 255, (100, 100))
+    ax.imshow(img, cmap='plasma')
+    b = ax.pcolormesh(data, edgecolors='black', cmap='plasma')
+    fig.colorbar(b, ax=ax)
+    gr_path = "./static/newgr.png"
+    sns.displot(data)
+    #plt.show()
+    plt.savefig(gr_path)
+    plt.close()
     x, y = im.size
     if choice:
         a = im.crop((0, 0, int(y * 0.5), x))
@@ -109,9 +120,10 @@ def iz():
     if form.validate_on_submit():
         photo = form.upload.data.filename.split('.')[-1]
         filename = os.path.join('./static', f'photo.{photo}')
+        filename_graph = os.path.join('./static', f'newgr.png')
         form.upload.data.save(filename)
         twist_image(filename, form.user.data)
-    return render_template('iz.html', form=form, image_name=filename)
+    return render_template('iz.html', form=form, image_name=filename,filename_graph=filename_graph)
  
 
  
