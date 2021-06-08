@@ -13,6 +13,8 @@ import base64
 from PIL import Image
 from io import BytesIO
 import json
+import matplotlib.pyplot as plt
+import seaborn as sns
  
 # import lxml.etree as ET
  
