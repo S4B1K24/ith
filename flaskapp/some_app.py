@@ -117,6 +117,7 @@ def twist_image(file_name, choice):
 def iz():
     form = IzForm()
     filename = None
+    filename_graph=None
     if form.validate_on_submit():
         photo = form.upload.data.filename.split('.')[-1]
         filename = os.path.join('./static', f'photo.{photo}')
