@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import render_template
 from flask_wtf import FlaskForm, RecaptchaField
-from wtforms import StringField, SubmitField, TextField
+from wtforms import StringField, SubmitField, BooleanField
 from wtforms.validators import DataRequired
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from flask_bootstrap import Bootstrap
@@ -36,7 +36,7 @@ if __name__ == "__main__":
 @app.route("/data_to")
 def data_to():
     # создаем переменные с данными для передачи в шаблон
-    some_pars = {'user': 'Ivan', 'color': 'red'}
+    some_pars = {'vertikal': 'Ivan', 'color': 'red'}
     some_str = 'Hello my dear friends!'
     some_value = 10
     # передаем данные в шаблон и вызываем его
@@ -102,9 +102,17 @@ def twist_image(file_name, choice):
     #plt.show()
     plt.savefig(gr_path)
     plt.close()
-    im = Image.open(file_name)
-    x, y = im.size
-    im = im.rotate(int(choice))
+   x, y = im.size
+    if choice:
+        a = im.crop((0, 0, int(y * 0.5), x))
+        b = im.crop((int(y * 0.5), 0, x, y))
+        im.paste(b, (0, 0))
+        im.paste(a, (int(x * 0.5), 0))
+    else:
+        a = im.crop((0, 0, x, int(y * 0.5)))
+        b = im.crop((0, int(y * 0.5), x, y))
+        im.paste(b, (0, 0))
+        im.paste(a, (0, int(y * 0.5)))
     im.save(file_name)
 
  
