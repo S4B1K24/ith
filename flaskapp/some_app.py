@@ -1,4 +1,4 @@
-•	from flask import Flask
+from flask import Flask
 from flask import render_template
 from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import StringField, SubmitField, BooleanField
