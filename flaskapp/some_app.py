@@ -108,11 +108,21 @@ def twist_image(file_name, choice):
         b = im.crop((int(y * 0.5), 0, x, y))
         im.paste(b, (0, 0))
         im.paste(a, (int(x * 0.5), 0))
+        im = im.convert('RGB')
+        r, g, b = im.split()
+        r = r.point(lambda i: i * 2.5)
+        out = Image.merge('RGB', (r, g, b))
+        out.show()
     else:
         a = im.crop((0, 0, x, int(y * 0.5)))
         b = im.crop((0, int(y * 0.5), x, y))
         im.paste(b, (0, 0))
         im.paste(a, (0, int(y * 0.5)))
+        im = im.convert('RGB')
+        r, g, b = im.split()
+        r = r.point(lambda i: i * 2.5)
+        out = Image.merge('RGB', (r, g, b))
+        out.show()
     im.save(file_name)
 
  
