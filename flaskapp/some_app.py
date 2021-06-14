@@ -13,9 +13,6 @@ import base64
 from PIL import Image
 from io import BytesIO
 import json
-import matplotlib.pyplot as plt
-import seaborn as sns
-import numpy as np
  
 # import lxml.etree as ET
  
@@ -54,8 +51,8 @@ SECRET_KEY = 'secret'
 app.config['SECRET_KEY'] = SECRET_KEY
 # используем капчу и полученные секретные ключи с сайта google 
 app.config['RECAPTCHA_USE_SSL'] = False
-app.config['RECAPTCHA_PUBLIC_KEY'] = '6LfjXx4bAAAAALy8h1JQozxNgDY1ALDfOl-CKVkl'
-app.config['RECAPTCHA_PRIVATE_KEY'] = '6LfjXx4bAAAAAIb46w0Usl6yPtLy7OPOXuPZi1G5'
+app.config['RECAPTCHA_PUBLIC_KEY'] = '6LePmPcaAAAAAKXAXLkMwCeyDvMBnrSgbNKJySUa'
+app.config['RECAPTCHA_PRIVATE_KEY'] = '6LePmPcaAAAAAPXIblJMnnmnzRcYtu6fLluxlYHg'
 app.config['RECAPTCHA_OPTIONS'] = {'theme': 'white'}
 # обязательно добавить для работы со стандартными шаблонами
  
@@ -85,62 +82,61 @@ class IzForm(FlaskForm):
         FileRequired(),
         FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
     recaptcha = RecaptchaField()
-    vertical_gorithont = TextField()
+    user = BooleanField()
     submit = SubmitField('send')
  
  
 def twist_image(file_name, choice):
     im = Image.open(file_name)
-    fig = plt.figure(figsize=(6, 4))
-    ax = fig.add_subplot()
-    data = np.random.randint(0, 255, (100, 100))
-    ax.imshow(im, cmap='plasma')
-    b = ax.pcolormesh(data, edgecolors='black', cmap='plasma')
-    fig.colorbar(b, ax=ax)
-    gr_path = "./static/newgr.png"
-    sns.displot(data)
-    #plt.show()
-    plt.savefig(gr_path)
-    plt.close()
-   x, y = im.size
+    x, y = im.size
     if choice:
         a = im.crop((0, 0, int(y * 0.5), x))
         b = im.crop((int(y * 0.5), 0, x, y))
         im.paste(b, (0, 0))
         im.paste(a, (int(x * 0.5), 0))
-        im = im.convert('RGB')
-        r, g, b = im.split()
-        r = r.point(lambda i: i * 2.5)
-        out = Image.merge('RGB', (r, g, b))
-        out.show()
     else:
         a = im.crop((0, 0, x, int(y * 0.5)))
         b = im.crop((0, int(y * 0.5), x, y))
         im.paste(b, (0, 0))
         im.paste(a, (0, int(y * 0.5)))
-        im = im.convert('RGB')
-        r, g, b = im.split()
-        r = r.point(lambda i: i * 2.5)
-        out = Image.merge('RGB', (r, g, b))
-        out.show()
     im.save(file_name)
-
  
  
 @app.route("/iz", methods=['GET', 'POST'])
 def iz():
     form = IzForm()
     filename = None
-    filename_graph=None
     if form.validate_on_submit():
         photo = form.upload.data.filename.split('.')[-1]
         filename = os.path.join('./static', f'photo.{photo}')
-        filename_graph = os.path.join('./static', f'newgr.png')
         form.upload.data.save(filename)
-        twist_image(filename, form.vertical_gorithont.data)
-    return render_template('iz.html', form=form, image_name=filename,filename_graph=filename_graph)
+        twist_image(filename, form.user.data)
+    return render_template('iz.html', form=form, image_name=filename)
  
-
+import net as neuronet 
+@app.route("/net", methods=['GET', 'POST'])
+def net():
+    # создаем объект формы
+    form = NetForm()
+    # обнуляем переменные передаваемые в форму
+    filename = None
+    neurodic = {}
+    # проверяем нажатие сабмит и валидацию введенных данных
+    if form.validate_on_submit():
+        # файлы с изображениями читаются из каталога static
+        filename = os.path.join('./static', secure_filename(form.upload.data.filename))
+        fcount, fimage = neuronet.read_image_files(10, './static')
+        # передаем все изображения в каталоге на классификацию
+        # можете изменить немного код и передать только загруженный файл
+        decode = neuronet.getresult(fimage)
+        # записываем в словарь данные классификации
+        for elem in decode:
+            neurodic[elem[0][1]] = elem[0][2]
+        # сохраняем загруженный файл
+        form.upload.data.save(filename)
+    # передаем форму в шаблон, так же передаем имя файла и результат работы нейронной
+    # сети если был нажат сабмит, либо передадим falsy значения
+    return render_template('net.html', form=form, image_name=filename, neurodic=neurodic)
  
  
 # метод для обработки запроса от пользователя
