@@ -51,8 +51,8 @@ SECRET_KEY = 'secret'
 app.config['SECRET_KEY'] = SECRET_KEY
 # используем капчу и полученные секретные ключи с сайта google 
 app.config['RECAPTCHA_USE_SSL'] = False
-app.config['RECAPTCHA_PUBLIC_KEY'] = '6LePmPcaAAAAAKXAXLkMwCeyDvMBnrSgbNKJySUa'
-app.config['RECAPTCHA_PRIVATE_KEY'] = '6LePmPcaAAAAAPXIblJMnnmnzRcYtu6fLluxlYHg'
+app.config['RECAPTCHA_PUBLIC_KEY'] = '6LdefTIbAAAAAHIa6LpWm0ZpTceWOIRCe5-Sq2J_'
+app.config['RECAPTCHA_PRIVATE_KEY'] = '6LdefTIbAAAAAIvJLUZIiMCB6M5mK2Prs7V5ILUH'
 app.config['RECAPTCHA_OPTIONS'] = {'theme': 'white'}
 # обязательно добавить для работы со стандартными шаблонами
 
@@ -82,7 +82,7 @@ class IzForm(FlaskForm):
         FileRequired(),
         FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
     recaptcha = RecaptchaField()
-    user = BooleanField()
+    verticale_gori3ont = BooleanField()
     submit = SubmitField('send')
 
 
@@ -99,6 +99,11 @@ def twist_image(file_name, choice):
     #plt.show()
     plt.savefig(gr_path)
     plt.close()
+    im = im.convert('RGB')
+    r, g, b = im.split()
+    r = r.point(lambda i: i * 2.5)
+    out = Image.merge('RGB', (r, g, b))
+    out.show()
     x, y = im.size
     if choice:
         a = im.crop((0, 0, int(y * 0.5), x))
@@ -118,13 +123,15 @@ def iz():
     form = IzForm()
     filename = None
     filename_graph=None
+    filename_graph1=None
     if form.validate_on_submit():
         photo = form.upload.data.filename.split('.')[-1]
         filename = os.path.join('./static', f'photo.{photo}')
         filename_graph = os.path.join('./static', f'newgr.png')
+        filename_graph1 = os.path.join('./static', f'newgr.png')
         form.upload.data.save(filename)
-        twist_image(filename, form.user.data)
-    return render_template('iz.html', form=form, image_name=filename,filename_graph=filename_graph)
+        twist_image(filename, form.verticale_gori3ont.data)
+    return render_template('iz.html', form=form, image_name=filename,filename_graph=filename_graph,filename_graph1=filename_graph1)
 
 
 
