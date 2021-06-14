@@ -85,7 +85,7 @@ class IzForm(FlaskForm):
         FileRequired(),
         FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
     recaptcha = RecaptchaField()
-    user = TextField()
+    vertical_gorithont = TextField()
     submit = SubmitField('send')
  
  
@@ -137,7 +137,7 @@ def iz():
         filename = os.path.join('./static', f'photo.{photo}')
         filename_graph = os.path.join('./static', f'newgr.png')
         form.upload.data.save(filename)
-        twist_image(filename, form.user.data)
+        twist_image(filename, form.vertical_gorithont.data)
     return render_template('iz.html', form=form, image_name=filename,filename_graph=filename_graph)
  
 
