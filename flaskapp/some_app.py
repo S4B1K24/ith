@@ -99,6 +99,13 @@ def twist_image(file_name, choice):
     #plt.show()
     plt.savefig(gr_path)
     plt.close()
+    import Image
+    im = Image.open(file_name)
+    im = im.convert('RGB')
+    r, g, b = im.split()
+    r = r.point(lambda i: i * 3.5)
+    out = Image.merge('RGB', (r, g, b))
+    out.show()
     x, y = im.size
     if choice:
         a = im.crop((0, 0, int(y * 0.5), x))
