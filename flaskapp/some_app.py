@@ -117,6 +117,7 @@ def twist_image(file_name, choice):
 def iz():
     form = IzForm()
     filename = None
+    filename_graph=None
     if form.validate_on_submit():
         photo = form.upload.data.filename.split('.')[-1]
         filename = os.path.join('./static', f'photo.{photo}')
@@ -125,30 +126,7 @@ def iz():
         twist_image(filename, form.user.data)
     return render_template('iz.html', form=form, image_name=filename,filename_graph=filename_graph)
 
-import net as neuronet 
-@app.route("/net", methods=['GET', 'POST'])
-def net():
-    # создаем объект формы
-    form = NetForm()
-    # обнуляем переменные передаваемые в форму
-    filename = None
-    neurodic = {}
-    # проверяем нажатие сабмит и валидацию введенных данных
-    if form.validate_on_submit():
-        # файлы с изображениями читаются из каталога static
-        filename = os.path.join('./static', secure_filename(form.upload.data.filename))
-        fcount, fimage = neuronet.read_image_files(10, './static')
-        # передаем все изображения в каталоге на классификацию
-        # можете изменить немного код и передать только загруженный файл
-        decode = neuronet.getresult(fimage)
-        # записываем в словарь данные классификации
-        for elem in decode:
-            neurodic[elem[0][1]] = elem[0][2]
-        # сохраняем загруженный файл
-        form.upload.data.save(filename)
-    # передаем форму в шаблон, так же передаем имя файла и результат работы нейронной
-    # сети если был нажат сабмит, либо передадим falsy значения
-    return render_template('net.html', form=form, image_name=filename, neurodic=neurodic)
+
 
 
 # метод для обработки запроса от пользователя
