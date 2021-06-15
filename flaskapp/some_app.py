@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import render_template
 from flask_wtf import FlaskForm, RecaptchaField
-from wtforms import StringField, SubmitField, BooleanField
+from wtforms import StringField, SubmitField, TextField
 from wtforms.validators import DataRequired
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from flask_bootstrap import Bootstrap
